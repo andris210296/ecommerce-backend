@@ -1,16 +1,16 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.OrderItemDto;
-import com.example.ecommerce.entity.OrderItem;
+import com.example.ecommerce.dto.OrderItemRequestDto;
+import com.example.ecommerce.dto.OrderItemResponseDto;
 import com.example.ecommerce.service.OrderItemService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/order-items")
@@ -22,26 +22,26 @@ public class OrderItemController {
 
     @GetMapping
     @Operation(summary = "Get all order items", description = "Retrieve a list of all order items")
-    public ResponseEntity<List<OrderItemDto>> getAllOrderItems() {
+    public ResponseEntity<List<OrderItemResponseDto>> getAllOrderItems() {
         return ResponseEntity.ok(orderItemService.getAllOrderItems());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get order item by ID", description = "Retrieve an order item by its ID")
-    public ResponseEntity<OrderItemDto> getOrderItemById(@PathVariable Long id) {
+    public ResponseEntity<OrderItemResponseDto> getOrderItemById(@PathVariable Long id) {
         return ResponseEntity.ok(orderItemService.getOrderItemById(id));
     }
 
     @PostMapping
     @Operation(summary = "Create a new order item", description = "Create a new order item with the provided details")
-    public ResponseEntity<OrderItemDto> createOrderItem(@RequestBody OrderItemDto orderItemDto) {
-        return ResponseEntity.ok(orderItemService.createOrderItem(orderItemDto));
+    public ResponseEntity<OrderItemResponseDto> createOrderItem(@RequestBody @Valid OrderItemRequestDto orderItemResponseDto) {
+        return ResponseEntity.ok(orderItemService.createOrderItem(orderItemResponseDto));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update an existing order item", description = "Update an existing order item with the provided details")
-    public ResponseEntity<OrderItemDto> updateOrderItem(@PathVariable Long id, @RequestBody OrderItemDto orderItemDto) {
-        return ResponseEntity.ok(orderItemService.updateOrderItem(id, orderItemDto));
+    public ResponseEntity<OrderItemResponseDto> updateOrderItem(@PathVariable Long id, @RequestBody @Valid OrderItemRequestDto orderItemResponseDto) {
+        return ResponseEntity.ok(orderItemService.updateOrderItem(id, orderItemResponseDto));
     }
 
     @DeleteMapping("/{id}")

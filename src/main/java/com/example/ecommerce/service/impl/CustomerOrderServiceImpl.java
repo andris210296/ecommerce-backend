@@ -1,12 +1,12 @@
 package com.example.ecommerce.service.impl;
 
-import com.example.ecommerce.dto.CustomerOrderDto;
-import com.example.ecommerce.dto.OrderItemDto;
+import com.example.ecommerce.dto.CustomerOrderRequestDto;
+import com.example.ecommerce.dto.CustomerOrderResponseDto;
+import com.example.ecommerce.dto.OrderItemResponseDto;
 import com.example.ecommerce.entity.CustomerOrder;
 import com.example.ecommerce.exception.OrderNotCreatedException;
 import com.example.ecommerce.repository.CustomerOrderRepository;
 import com.example.ecommerce.service.CustomerOrderService;
-import com.example.ecommerce.service.OrderItemService;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,17 +22,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     private CustomerOrderRepository customerOrderRepository;
 
     @Override
-    public List<CustomerOrderDto> getAllOrders() {
+    public List<CustomerOrderResponseDto> getAllOrders() {
 
         List<CustomerOrder> orders = customerOrderRepository.findAll();
 
         return orders.stream()
-                .map(order -> CustomerOrderDto.builder()
+                .map(order -> CustomerOrderResponseDto.builder()
                         .id(order.getId())
                         .orderDate(order.getOrderDate())
                         .total(order.getTotal())
-                        .orderItemDtoList(order.getOrderItems().stream()
-                                .map(orderItem -> OrderItemDto.builder()
+                        .orderItemResponseDtoList(order.getOrderItems().stream()
+                                .map(orderItem -> OrderItemResponseDto.builder()
                                         .id(orderItem.getId())
                                         .productId(orderItem.getProduct().getId())
                                         .customerOrderId(orderItem.getCustomerOrder().getId())
@@ -44,17 +44,17 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrderDto getOrderByIdDto(Long id) {
+    public CustomerOrderResponseDto getOrderByIdDto(Long id) {
 
         CustomerOrder order = customerOrderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotCreatedException("The order with the provided ID does not exist"));
 
-        return CustomerOrderDto.builder()
+        return CustomerOrderResponseDto.builder()
                 .id(order.getId())
                 .orderDate(order.getOrderDate())
                 .total(order.getTotal())
-                .orderItemDtoList(order.getOrderItems().stream()
-                        .map(orderItem -> OrderItemDto.builder()
+                .orderItemResponseDtoList(order.getOrderItems().stream()
+                        .map(orderItem -> OrderItemResponseDto.builder()
                                 .id(orderItem.getId())
                                 .productId(orderItem.getProduct().getId())
                                 .customerOrderId(orderItem.getCustomerOrder().getId())
@@ -71,15 +71,16 @@ public class CustomerOrderServiceImpl implements CustomerOrderService {
     }
 
     @Override
-    public CustomerOrder createOrder(CustomerOrderDto orderDto) {
+    public CustomerOrder createOrder(CustomerOrderRequestDto orderDto) {
+        LocalDate orderDate = orderDto.getOrderDate() != null ? orderDto.getOrderDate() : LocalDate.now();
         CustomerOrder order = CustomerOrder.builder()
-                .orderDate(LocalDate.now())
+                .orderDate(orderDate)
                 .build();
         return customerOrderRepository.save(order);
     }
 
     @Override
-    public CustomerOrder updateOrder(Long id, CustomerOrderDto orderDetails) {
+    public CustomerOrder updateOrder(Long id, CustomerOrderRequestDto orderDetails) {
 
         CustomerOrder oldCustomerOrder = customerOrderRepository.findById(id)
                 .orElseThrow(() -> new OrderNotCreatedException("The order with the provided ID does not exist"));

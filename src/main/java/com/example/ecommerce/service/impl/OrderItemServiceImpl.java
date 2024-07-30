@@ -1,7 +1,7 @@
 package com.example.ecommerce.service.impl;
 
-import com.example.ecommerce.dto.CustomerOrderDto;
-import com.example.ecommerce.dto.OrderItemDto;
+import com.example.ecommerce.dto.OrderItemRequestDto;
+import com.example.ecommerce.dto.OrderItemResponseDto;
 import com.example.ecommerce.entity.CustomerOrder;
 import com.example.ecommerce.entity.OrderItem;
 import com.example.ecommerce.entity.Product;
@@ -29,12 +29,12 @@ public class OrderItemServiceImpl implements OrderItemService {
     private CustomerOrderService customerOrderService;
 
     @Override
-    public List<OrderItemDto> getAllOrderItems() {
+    public List<OrderItemResponseDto> getAllOrderItems() {
 
         List<OrderItem> orderItems = orderItemRepository.findAll();
 
         return orderItems.stream()
-                .map(orderItem -> OrderItemDto.builder()
+                .map(orderItem -> OrderItemResponseDto.builder()
                         .id(orderItem.getId())
                         .productId(orderItem.getProduct().getId())
                         .customerOrderId(orderItem.getCustomerOrder().getId())
@@ -45,12 +45,12 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public OrderItemDto getOrderItemById(Long id) {
+    public OrderItemResponseDto getOrderItemById(Long id) {
 
         OrderItem orderItem = orderItemRepository.findById(id)
                 .orElseThrow(() -> new OrderItemNotCreatedException("The order item with the provided ID does not exist"));
 
-        return OrderItemDto.builder()
+        return OrderItemResponseDto.builder()
                 .id(orderItem.getId())
                 .productId(orderItem.getProduct().getId())
                 .customerOrderId(orderItem.getCustomerOrder().getId())
@@ -59,19 +59,19 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public OrderItemDto createOrderItem(OrderItemDto orderItemDto) {
-        Product product = productService.getProductById(orderItemDto.getProductId());
-        CustomerOrder customerOrder = customerOrderService.getOrderById(orderItemDto.getCustomerOrderId());
+    public OrderItemResponseDto createOrderItem(OrderItemRequestDto orderItemResponseDto) {
+        Product product = productService.getProductById(orderItemResponseDto.getProductId());
+        CustomerOrder customerOrder = customerOrderService.getOrderById(orderItemResponseDto.getCustomerOrderId());
 
         OrderItem orderItem = OrderItem.builder()
                 .product(product)
                 .customerOrder(customerOrder)
-                .quantity(orderItemDto.getQuantity())
+                .quantity(orderItemResponseDto.getQuantity())
                 .build();
 
         OrderItem orderItemSaved = orderItemRepository.save(orderItem);
 
-        return OrderItemDto.builder()
+        return OrderItemResponseDto.builder()
                 .id(orderItemSaved.getId())
                 .productId(orderItemSaved.getProduct().getId())
                 .customerOrderId(orderItemSaved.getCustomerOrder().getId())
@@ -80,19 +80,19 @@ public class OrderItemServiceImpl implements OrderItemService {
     }
 
     @Override
-    public OrderItemDto updateOrderItem(Long id, OrderItemDto newOrderItemDto) {
+    public OrderItemResponseDto updateOrderItem(Long id, OrderItemRequestDto newOrderItemResponseDto) {
         OrderItem oldOrderItem = orderItemRepository.findById(id)
                 .orElseThrow(() -> new OrderItemNotCreatedException("The order item with the provided ID does not exist"));
-        Product product = productService.getProductById(newOrderItemDto.getProductId());
-        CustomerOrder customerOrder = customerOrderService.getOrderById(newOrderItemDto.getCustomerOrderId());
+        Product product = productService.getProductById(newOrderItemResponseDto.getProductId());
+        CustomerOrder customerOrder = customerOrderService.getOrderById(newOrderItemResponseDto.getCustomerOrderId());
 
-        oldOrderItem.setQuantity(newOrderItemDto.getQuantity());
+        oldOrderItem.setQuantity(newOrderItemResponseDto.getQuantity());
         oldOrderItem.setProduct(product);
         oldOrderItem.setCustomerOrder(customerOrder);
 
         OrderItem savedOrderItem = orderItemRepository.save(oldOrderItem);
 
-        return OrderItemDto.builder()
+        return OrderItemResponseDto.builder()
                 .id(savedOrderItem.getId())
                 .productId(savedOrderItem.getProduct().getId())
                 .customerOrderId(savedOrderItem.getCustomerOrder().getId())

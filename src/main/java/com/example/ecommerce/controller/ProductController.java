@@ -1,16 +1,16 @@
 package com.example.ecommerce.controller;
 
-import com.example.ecommerce.dto.ProductDto;
-import com.example.ecommerce.entity.Product;
+import com.example.ecommerce.dto.ProductRequestDto;
+import com.example.ecommerce.dto.ProductResponseDto;
 import com.example.ecommerce.service.ProductService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
@@ -22,25 +22,25 @@ public class ProductController {
 
     @GetMapping
     @Operation(summary = "Get all products", description = "Retrieve a list of all products")
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<List<ProductResponseDto>> getAllProducts() {
         return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get product by ID", description = "Retrieve a product by its ID")
-    public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        return ResponseEntity.ok(productService.getProductById(id));
+    public ResponseEntity<ProductResponseDto> getProductById(@PathVariable Long id) {
+        return ResponseEntity.ok(productService.getProductResponseById(id));
     }
 
     @PostMapping
     @Operation(summary = "Create a new product", description = "Create a new product with the provided details")
-    public ResponseEntity<Product> createProduct(@RequestBody ProductDto productDto) {
-        return ResponseEntity.ok(productService.createProduct(productDto));
+    public ResponseEntity<ProductResponseDto> createProduct(@RequestBody @Valid ProductRequestDto productResponseDto) {
+        return ResponseEntity.ok(productService.createProduct(productResponseDto));
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "Update an existing product", description = "Update an existing product with the provided details")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDto productDetails) {
+    public ResponseEntity<ProductResponseDto> updateProduct(@PathVariable Long id, @RequestBody @Valid ProductRequestDto productDetails) {
         return ResponseEntity.ok(productService.updateProduct(id, productDetails));
     }
 
