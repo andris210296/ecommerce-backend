@@ -1,12 +1,24 @@
 package com.example.ecommerce.dto;
 
-import com.example.ecommerce.entity.CustomerOrder;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-public record CustomerOrderDto (Date orderDate, String status) {
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class CustomerOrderDto {
 
-    public CustomerOrder toCustomerOrder() {
-        return new CustomerOrder(orderDate, status, null);
-    }
+    private Long id;
+    private LocalDate orderDate;
+    private List<OrderItemDto> orderItemDtoList = new ArrayList<>();
+    private BigDecimal total;
+
 }

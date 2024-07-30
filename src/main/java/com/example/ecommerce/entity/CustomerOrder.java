@@ -1,10 +1,12 @@
 package com.example.ecommerce.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -12,13 +14,16 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class CustomerOrder {
 
     @Id
@@ -26,30 +31,25 @@ public class CustomerOrder {
     private Long id;
 
     @NotNull
-    private Date orderDate;
+    private LocalDate orderDate;
 
-    @NotNull
-    private String status;
+    @OneToMany(mappedBy = "customerOrder", cascade = { CascadeType.PERSIST, CascadeType.MERGE }, fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderItem> orderItems;
+    private BigDecimal total;
 
     @Transient
-    public Double getTotal() {
+    public BigDecimal getTotal() {
         return getOrderItems().stream()
-                .mapToDouble(item -> item.getProduct().getPrice() * item.getQuantity())
-                .sum();
+                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    @Transient
-    public int getQuantityOfProducts() {
-        return this.orderItems.size();
-    }
-
-    public CustomerOrder(Date orderDate, String status, List<OrderItem> orderItems) {
-        this.orderDate = orderDate;
-        this.status = status;
-        this.orderItems = orderItems;
+    public List<OrderItem> getOrderItems() {
+        if (orderItems == null) {
+            orderItems = new ArrayList<>();
+        }
+        return orderItems;
     }
 
 }
