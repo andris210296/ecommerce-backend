@@ -2,13 +2,13 @@ package com.example.ecommerce.service.impl;
 
 import com.example.ecommerce.dto.ProductDto;
 import com.example.ecommerce.entity.Product;
+import com.example.ecommerce.exception.ProductNotCreatedException;
 import com.example.ecommerce.repository.ProductRepository;
 import com.example.ecommerce.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -23,37 +23,36 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     public Product getProductById(Long id) {
-        Optional<Product> product = productRepository.findById(id);
-        return product.orElse(null);
+        return productRepository.findById(id)
+                .orElseThrow(() -> new ProductNotCreatedException("The product with the provided ID does not exist"));
     }
 
     @Override
     public Product createProduct(ProductDto productDto) {
-        Product product = productDto.toProduct();
+        Product product = Product.builder()
+                .name(productDto.name())
+                .price(productDto.price())
+                .description(productDto.description())
+                .build();
+
         return productRepository.save(product);
     }
 
     @Override
     public Product updateProduct(Long id, ProductDto productDetails) {
-        Optional<Product> productOptional = productRepository.findById(id);
-        if (productOptional.isPresent()) {
-            Product product = productOptional.get();
-            product.setName(productDetails.name());
-            product.setPrice(productDetails.price());
-            product.setDescription(productDetails.description());
-            return productRepository.save(product);
-        } else {
-            return null;
-        }
+        Product oldProduct = getProductById(id);
+
+        oldProduct.setName(productDetails.name());
+        oldProduct.setPrice(productDetails.price());
+        oldProduct.setDescription(productDetails.description());
+
+        return productRepository.save(oldProduct);
     }
 
     @Override
     public boolean deleteProduct(Long id) {
-        if (productRepository.existsById(id)) {
-            productRepository.deleteById(id);
-            return true;
-        } else {
-            return false;
-        }
+        Product product = getProductById(id);
+        productRepository.delete(product);
+        return true;
     }
 }

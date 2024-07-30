@@ -1,10 +1,8 @@
 package com.example.ecommerce.dto;
 
-import com.example.ecommerce.entity.Product;
 
-public record ProductDto(String name, Double price, String description) {
+import java.math.BigDecimal;
 
-    public Product toProduct() {
-        return new Product(name, price, description);
-    }
+public record ProductDto(String name, BigDecimal price, String description) {
+
 }

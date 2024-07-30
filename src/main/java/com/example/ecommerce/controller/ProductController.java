@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/products")
@@ -21,19 +22,14 @@ public class ProductController {
 
     @GetMapping
     @Operation(summary = "Get all products", description = "Retrieve a list of all products")
-    public List<Product> getAllProducts() {
-        return productService.getAllProducts();
+    public ResponseEntity<List<Product>> getAllProducts() {
+        return ResponseEntity.ok(productService.getAllProducts());
     }
 
     @GetMapping("/{id}")
     @Operation(summary = "Get product by ID", description = "Retrieve a product by its ID")
     public ResponseEntity<Product> getProductById(@PathVariable Long id) {
-        Product product = productService.getProductById(id);
-        if (product != null) {
-            return ResponseEntity.ok(product);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(productService.getProductById(id));
     }
 
     @PostMapping
@@ -45,19 +41,13 @@ public class ProductController {
     @PutMapping("/{id}")
     @Operation(summary = "Update an existing product", description = "Update an existing product with the provided details")
     public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody ProductDto productDetails) {
-        Product updatedProduct = productService.updateProduct(id, productDetails);
-        if (updatedProduct != null) {
-            return ResponseEntity.ok(updatedProduct);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        return ResponseEntity.ok(productService.updateProduct(id, productDetails));
     }
 
     @DeleteMapping("/{id}")
     @Operation(summary = "Delete a product", description = "Delete a product by its ID")
     public ResponseEntity<Void> deleteProduct(@PathVariable Long id) {
-        boolean isDeleted = productService.deleteProduct(id);
-        if (isDeleted) {
+        if(productService.deleteProduct(id)) {
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.notFound().build();
