@@ -5,7 +5,7 @@ import org.springframework.http.ProblemDetail;
 
 public class OrderNotCreatedException extends EcommerceException {
 
-    private String detail;
+    private final String detail;
 
     public OrderNotCreatedException(String detail) {
         this.detail = detail;
