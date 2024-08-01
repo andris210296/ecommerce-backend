@@ -35,7 +35,7 @@ This is a Spring Boot-based e-commerce application that provides functionalities
    ```
 
 6. **Run with Docker**:
-   Ensure you have Docker and Docker Compose installed. Use the provided `docker-compose.yml` to build and run the application and database. Running the `docker-compose up --build` command will automatically use the `Dockerfile` to build the Docker image for the e-commerce application and then start both the PostgreSQL database and the e-commerce application containers. Make sure that the `target` folder contains the JAR file of the project before running this command:
+   Ensure you have Docker installed. Use the provided `docker-compose.yml` to build and run the application and the database. Make sure that the `target` folder contains the JAR file of the project before running this command:
     ```sh
     docker-compose up --build
     ```
