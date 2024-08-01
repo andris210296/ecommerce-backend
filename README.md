@@ -9,32 +9,24 @@ This is a Spring Boot-based e-commerce application that provides functionalities
     git clone https://github.com/your-repo/ecommerce.git
     cd ecommerce
     ```
-
-2. **Configure the database**:
-   Update the `src/main/resources/application.properties` file with your PostgreSQL database configuration:
-    ```ini
-    spring.datasource.url=jdbc:postgresql://localhost:5432/ecommerce
-    spring.datasource.username=your-username
-    spring.datasource.password=your-password
-    ```
-      
-3. **Build the project**:
+         
+2. **Build the project**:
     ```sh
     mvn clean install
     ```
 
-4. **Run the application**:
+3. **Run the application**:
     ```sh
     mvn spring-boot:run
     ```
 
-5. **Package the application**:
+4. **Package the application**:
   Run the following command to create the JAR file in the `target` folder. This is necessary for the Dockerfile to work correctly:
    ```sh
    mvn clean package
    ```
 
-6. **Run with Docker**:
+5. **Run with Docker**:
    Ensure you have Docker installed. Use the provided `docker-compose.yml` to build and run the application and the database. Make sure that the `target` folder contains the JAR file of the project before running this command:
     ```sh
     docker-compose up --build
